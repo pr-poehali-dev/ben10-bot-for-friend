@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "OPTIONS preflight",
+      "method": "OPTIONS",
+      "path": "/",
+      "expectedStatus": 200
+    },
+    {
+      "name": "POST without secret header returns 403",
+      "method": "POST",
+      "path": "/",
+      "body": "{}",
+      "expectedStatus": 403
+    }
+  ]
+}
