@@ -556,12 +556,18 @@ def handler(event: dict, context) -> dict:
     if event.get("httpMethod") == "OPTIONS":
         return {"statusCode": 200, "headers": cors, "body": ""}
 
-    # Проверяем webhook secret
+    # Проверяем webhook secret (если задан)
     webhook_secret = os.environ.get("TELEGRAM_WEBHOOK_SECRET", "")
     if webhook_secret:
-        incoming = event.get("headers", {}).get("X-Telegram-Bot-Api-Secret-Token", "")
+        headers = event.get("headers", {})
+        # заголовок может прийти в разном регистре
+        incoming = (
+            headers.get("X-Telegram-Bot-Api-Secret-Token")
+            or headers.get("x-telegram-bot-api-secret-token")
+            or ""
+        )
         if incoming != webhook_secret:
-            return {"statusCode": 403, "headers": cors, "body": "Forbidden"}
+            return {"statusCode": 200, "headers": cors, "body": "ok"}
 
     body = json.loads(event.get("body", "{}"))
 
